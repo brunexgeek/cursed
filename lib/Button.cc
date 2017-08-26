@@ -43,7 +43,6 @@ void Button::paint()
 
 	temp = L"[ " + text + L" ]";
 	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
-	wattrset( (WINDOW*) content, getTheme().styles[THEME_WINDOW].style);
 	touchwin( (WINDOW*) content );
 }
 

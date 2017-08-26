@@ -43,7 +43,6 @@ void CheckBox::paint()
 	temp = (checked) ? L"[x] " : L"[ ] ";
 	temp += text;
 	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
-	wattrset( (WINDOW*) content, getTheme().styles[THEME_WINDOW].style);
 	touchwin( (WINDOW*) content );
 }
 

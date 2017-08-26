@@ -15,7 +15,7 @@
  */
 
 #include <cursed/TextBox.hh>
-
+#include <cursed/Text.hh>
 
 namespace cursed {
 
@@ -43,9 +43,12 @@ void TextBox::paint()
 	std::wstring temp;
 
 	if (isActive())
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_INPUTBOX_ACTIVE].style);
+		wattrset( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX_ACTIVE].style);
 	else
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_INPUTBOX].style);
+		wattrset( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX].style);
+
+	temp.append(width, ' ');
+	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
 
 	--width;
 
@@ -54,16 +57,18 @@ void TextBox::paint()
 	else
 	{
 		temp = text;
-		int fill = width - (int)text.length();
-		if (fill > 0) temp.append(fill, ' ');
+		//int fill = width - (int)text.length();
+		//if (fill > 0) temp.append(fill, ' ');
 	}
 
-	temp += ' ';
 	width++;
 
 	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
-	wattrset( (WINDOW*) content, getTheme().styles[THEME_WINDOW].style);
-	wmove( (WINDOW*) content, 0, std::min(position, width-1));
+	/*if (isActive())
+	{
+		wattron( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX_CURSOR].style);
+		waddwstr( (WINDOW*) content, L" ");
+	}*/
 	touchwin( (WINDOW*) content);
 }
 
@@ -131,9 +136,6 @@ bool TextBox::onKeyPress(
 		++position;
 		handled = true;
 	}
-
-	/*if (handled)
-		paint();*/
 
 	return handled;
 }

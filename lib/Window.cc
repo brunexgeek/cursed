@@ -112,7 +112,7 @@ void Window::paint()
 	if (content != NULL)
 	{
 		wbkgd( (WINDOW*) content, COLOR_PAIR(THEME_WINDOW));
-		wattron( (WINDOW*) content, COLOR_PAIR(THEME_WINDOW));
+		wattrset( (WINDOW*) content, COLOR_PAIR(THEME_WINDOW));
 	}
 
 	touchwin( (WINDOW*) shadow);

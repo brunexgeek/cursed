@@ -36,6 +36,7 @@ Component::Component(
 	if (width < 0) this->width = 0;
 
 	content = derwin( (WINDOW*) parent.content, this->height, this->width, this->y, this->x);
+	wbkgd( (WINDOW*) content, getTheme().styles[THEME_WINDOW].style );
 	parent.addComponent(*this, &this->interactive);
 }
 
