@@ -43,33 +43,36 @@ void TextBox::paint()
 	std::wstring temp;
 
 	if (isActive())
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX_ACTIVE].style);
+	{
+		setBackground(THEME_TEXTBOX_ACTIVE);
+		setStyle(THEME_TEXTBOX_ACTIVE);
+	}
 	else
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX].style);
+	{
+		setBackground(THEME_TEXTBOX);
+		setStyle(THEME_TEXTBOX);
+	}
 
-	temp.append(width, ' ');
-	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
-
+	wclear( (WINDOW*)content );
 	--width;
 
 	if ((int)text.length() > width)
 		temp = text.substr(text.length() - width);
 	else
-	{
 		temp = text;
-		//int fill = width - (int)text.length();
-		//if (fill > 0) temp.append(fill, ' ');
-	}
 
 	width++;
 
 	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
+
 	/*if (isActive())
 	{
 		wattron( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX_CURSOR].style);
 		waddwstr( (WINDOW*) content, L" ");
 	}*/
+	wmove( (WINDOW*) content, 0, position );
 	touchwin( (WINDOW*) content);
+	//wcursyncup( (WINDOW*) content );
 }
 
 
@@ -82,6 +85,8 @@ const std::wstring &TextBox::getText() const
 void TextBox::onActive(
 	bool state )
 {
+	position = text.length();
+
 	if (state)
 		curs_set(2);
 	else

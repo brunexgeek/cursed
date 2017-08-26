@@ -36,9 +36,15 @@ void CheckBox::paint()
 	std::wstring temp;
 
 	if (isActive())
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_BUTTON_ACTIVE].style);
+	{
+		setBackground(THEME_CHECKBOX_ACTIVE);
+		setStyle(THEME_CHECKBOX_ACTIVE);
+	}
 	else
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_BUTTON].style);
+	{
+		setBackground(THEME_CHECKBOX);
+		setStyle(THEME_CHECKBOX);
+	}
 
 	temp = (checked) ? L"[x] " : L"[ ] ";
 	temp += text;

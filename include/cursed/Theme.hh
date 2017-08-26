@@ -31,7 +31,7 @@ struct ThemeColor
 
 struct ThemeStyle
 {
-	int index, style;
+	int index, color, attribute;
 };
 
 struct Theme
@@ -49,9 +49,13 @@ struct Theme
 #define THEME_BUTTON_ACTIVE            0x06
 #define THEME_LABEL                    0x07
 #define THEME_LABEL_HIGHLIGHT          0x08
-#define THEME_TEXTBOX                 0x09
-#define THEME_TEXTBOX_ACTIVE          0x0A
-#define THEME_TEXTBOX_CURSOR          0x0B
+#define THEME_TEXTBOX                  0x09
+#define THEME_TEXTBOX_ACTIVE           0x0A
+#define THEME_TEXTBOX_CURSOR           0x0B
+#define THEME_CHECKBOX                 0x0C
+#define THEME_CHECKBOX_ACTIVE          0x0D
+
+
 
 #define POSITION_CENTER     (int)(-1)
 #define ESCAPER             '\x1B'
@@ -64,35 +68,39 @@ struct Theme
 static const ThemeColor THEME_COLORS[] =
 {
 	{ 0,                        0,           0 },
-	{ THEME_BACKGROUND,         COLOR_WHITE, COLOR_BLUE },
+	{ THEME_BACKGROUND,         COLOR_WHITE, COLOR_BLUE  },
 	{ THEME_SHADOW,             COLOR_BLACK, COLOR_BLACK },
 	{ THEME_WINDOW,             COLOR_BLACK, COLOR_WHITE },
 	{ THEME_WINDOW_TITLE,       COLOR_BLUE,  COLOR_WHITE },
 	{ THEME_BUTTON,             COLOR_BLACK, COLOR_WHITE },
-	{ THEME_BUTTON_ACTIVE,      COLOR_BLUE,  COLOR_WHITE },
+	{ THEME_BUTTON_ACTIVE,      COLOR_WHITE, COLOR_BLUE  },
 	{ THEME_LABEL,              COLOR_BLACK, COLOR_WHITE },
 	{ THEME_LABEL_HIGHLIGHT,    COLOR_BLUE,  COLOR_WHITE },
-	{ THEME_TEXTBOX,            COLOR_BLACK, COLOR_WHITE },
-	{ THEME_TEXTBOX_ACTIVE,     COLOR_BLACK, COLOR_WHITE },
+	{ THEME_TEXTBOX,            COLOR_WHITE, COLOR_BLACK },
+	{ THEME_TEXTBOX_ACTIVE,     COLOR_WHITE, COLOR_BLUE  },
 	{ THEME_TEXTBOX_CURSOR,     COLOR_BLACK, COLOR_WHITE },
+	{ THEME_CHECKBOX,           COLOR_BLACK, COLOR_WHITE },
+	{ THEME_CHECKBOX_ACTIVE,    COLOR_WHITE, COLOR_BLUE  },
 	{ 0,                        0,           0 },
 };
 
 static const ThemeStyle THEME_STYLES[] =
 {
-	{ 0,                        0 },
-	{ THEME_BACKGROUND,         COLOR_PAIR(THEME_BACKGROUND) },
-	{ THEME_SHADOW,             COLOR_PAIR(THEME_SHADOW) },
-	{ THEME_WINDOW,             COLOR_PAIR(THEME_WINDOW) },
-	{ THEME_WINDOW_TITLE,       COLOR_PAIR(THEME_WINDOW_TITLE) },
-	{ THEME_BUTTON,             COLOR_PAIR(THEME_BUTTON) | A_DIM },
-	{ THEME_BUTTON_ACTIVE,      COLOR_PAIR(THEME_BUTTON_ACTIVE) | A_REVERSE },
-	{ THEME_LABEL,              COLOR_PAIR(THEME_LABEL) },
-	{ THEME_LABEL_HIGHLIGHT,    COLOR_PAIR(THEME_LABEL_HIGHLIGHT) },
-	{ THEME_TEXTBOX,            COLOR_PAIR(THEME_TEXTBOX) | A_REVERSE },
-	{ THEME_TEXTBOX_ACTIVE,     COLOR_PAIR(THEME_TEXTBOX_ACTIVE) | A_REVERSE },
-	{ THEME_TEXTBOX_CURSOR,     COLOR_PAIR(THEME_TEXTBOX_CURSOR) },
-	{ 0,                        0 },
+	{ 0,                        0                                    , 0 },
+	{ THEME_BACKGROUND,         COLOR_PAIR(THEME_BACKGROUND)         , 0 },
+	{ THEME_SHADOW,             COLOR_PAIR(THEME_SHADOW)             , 0 },
+	{ THEME_WINDOW,             COLOR_PAIR(THEME_WINDOW)             , 0 },
+	{ THEME_WINDOW_TITLE,       COLOR_PAIR(THEME_WINDOW_TITLE)       , 0 },
+	{ THEME_BUTTON,             COLOR_PAIR(THEME_BUTTON)             , A_DIM },
+	{ THEME_BUTTON_ACTIVE,      COLOR_PAIR(THEME_BUTTON_ACTIVE)      , 0 },
+	{ THEME_LABEL,              COLOR_PAIR(THEME_LABEL)              , 0 },
+	{ THEME_LABEL_HIGHLIGHT,    COLOR_PAIR(THEME_LABEL_HIGHLIGHT)    , 0 },
+	{ THEME_TEXTBOX,            COLOR_PAIR(THEME_TEXTBOX)            , 0 },
+	{ THEME_TEXTBOX_ACTIVE,     COLOR_PAIR(THEME_TEXTBOX_ACTIVE)     , 0 },
+	{ THEME_TEXTBOX_CURSOR,     COLOR_PAIR(THEME_TEXTBOX_CURSOR)     , 0 },
+	{ THEME_CHECKBOX,           COLOR_PAIR(THEME_CHECKBOX)           , 0 },
+	{ THEME_CHECKBOX_ACTIVE,    COLOR_PAIR(THEME_CHECKBOX_ACTIVE)    , 0 },
+	{ 0,                        0                                    , 0 },
 };
 
 static const Theme THEME_DEFAULT =

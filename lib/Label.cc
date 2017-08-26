@@ -21,8 +21,7 @@
 namespace cursed {
 
 
-static void ncurses_render(
-	WINDOW *content,
+void Label::render(
 	const std::wstring &text,
 	int y,
 	int x )
@@ -31,9 +30,9 @@ static void ncurses_render(
 
 	current = start = text.c_str();
 
-	wmove(content, y, x);
-	wattrset(content, COLOR_PAIR(THEME_LABEL) | A_NORMAL );
-	wbkgd(content, COLOR_PAIR(THEME_LABEL) );
+	wmove( (WINDOW*)content, y, x);
+	//wattrset(content, COLOR_PAIR(THEME_LABEL) | A_NORMAL );
+	//wbkgd(content, COLOR_PAIR(THEME_LABEL) );
 
 	bool isBold = false;
 	bool isUnderline = false;
@@ -46,7 +45,7 @@ static void ncurses_render(
 
 			// flush the actual content
 			if (current - start > 0)
-				waddnwstr(content, start, (int)(current - start));
+				waddnwstr((WINDOW*)content, start, (int)(current - start));
 			++current;
 
 			switch (command)
@@ -54,21 +53,21 @@ static void ncurses_render(
 				case COMMAND_BOLD:
 					isBold = !isBold;
 					if (isBold)
-						wattron(content, COLOR_PAIR(THEME_LABEL_HIGHLIGHT));
+						wattron((WINDOW*)content, COLOR_PAIR(THEME_LABEL_HIGHLIGHT));
 					else
-						wattroff(content, COLOR_PAIR(THEME_LABEL_HIGHLIGHT));
+						wattroff((WINDOW*)content, COLOR_PAIR(THEME_LABEL_HIGHLIGHT));
 					break;
 
 				case COMMAND_UNDERLINE:
 					isUnderline = !isUnderline;
 					if (isUnderline)
-						wattron(content, A_UNDERLINE);
+						wattron((WINDOW*)content, A_UNDERLINE);
 					else
-						wattroff(content, A_UNDERLINE);
+						wattroff((WINDOW*)content, A_UNDERLINE);
 					break;
 
 				case COMMAND_ESCAPE:
-					waddch(content, *current);
+					waddch((WINDOW*)content, *current);
 					++current;
 					break;
 			}
@@ -81,7 +80,7 @@ static void ncurses_render(
 	}
 
 	if (current >= start)
-		waddnwstr(content, start, (int)(current - start));
+		waddnwstr((WINDOW*)content, start, (int)(current - start));
 }
 
 
@@ -105,8 +104,10 @@ Label::~Label()
 
 void Label::paint()
 {
-	wattrset( (WINDOW*) content, getTheme().styles[THEME_LABEL].style);
-	ncurses_render((WINDOW*) content, text, y, x);
+	setBackground(THEME_LABEL);
+	setStyle(THEME_LABEL);
+
+	render(text, y, x);
 	touchwin((WINDOW*) content);
 }
 

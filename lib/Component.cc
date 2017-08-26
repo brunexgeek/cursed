@@ -36,7 +36,8 @@ Component::Component(
 	if (width < 0) this->width = 0;
 
 	content = derwin( (WINDOW*) parent.content, this->height, this->width, this->y, this->x);
-	wbkgd( (WINDOW*) content, getTheme().styles[THEME_WINDOW].style );
+	//wbkgd( (WINDOW*) content, getTheme().styles[THEME_WINDOW].style );
+	setBackground(THEME_WINDOW);
 	parent.addComponent(*this, &this->interactive);
 }
 
@@ -108,6 +109,20 @@ void Component::refresh()
 bool Component::isInteractive() const
 {
 	return interactive;
+}
+
+
+void Component::setStyle(
+	int id )
+{
+	wattrset( (WINDOW*) content, getTheme().styles[id].color | getTheme().styles[id].attribute);
+}
+
+
+void Component::setBackground(
+	int id )
+{
+	wbkgdset( (WINDOW*) content, getTheme().styles[id].color );
 }
 
 

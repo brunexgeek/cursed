@@ -121,6 +121,10 @@ class Window : public Paintable, public KeyEventListener
 			Component &control,
 			const bool *interactive = NULL );
 
+		void setBackground(
+			void *target,
+			int id );
+
 	friend class Component;
 };
 

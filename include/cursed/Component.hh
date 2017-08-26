@@ -82,6 +82,12 @@ class Component : public Paintable, public KeyEventListener
 		Window &parent;
 		void *content;
 		bool interactive;
+
+		void setStyle(
+			int id );
+
+		void setBackground(
+			int id );
 };
 
 

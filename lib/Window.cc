@@ -94,13 +94,15 @@ void Window::paint()
 {
 	if (shadow != NULL)
 	{
-		wbkgd( (WINDOW*) shadow, COLOR_PAIR(THEME_SHADOW));
+		setBackground(shadow, THEME_SHADOW);
+		wclear( (WINDOW*) shadow );
 		wborder( (WINDOW*) shadow, ' ', ' ', ' ',' ',' ',' ',' ',' ');
 	}
 
 	if (window != NULL)
 	{
-		wbkgd( (WINDOW*) window, COLOR_PAIR(THEME_WINDOW));
+		setBackground(window, THEME_WINDOW);
+		wclear( (WINDOW*) window );
 		box( (WINDOW*) window, 0 , 0);
 		if (!title.empty())
 		{
@@ -111,8 +113,8 @@ void Window::paint()
 
 	if (content != NULL)
 	{
-		wbkgd( (WINDOW*) content, COLOR_PAIR(THEME_WINDOW));
-		wattrset( (WINDOW*) content, COLOR_PAIR(THEME_WINDOW));
+		setBackground(content, THEME_WINDOW);
+		wclear( (WINDOW*) content );
 	}
 
 	touchwin( (WINDOW*) shadow);
@@ -333,6 +335,15 @@ bool Window::onKeyPress(
 	}
 
 	return handled;
+}
+
+
+void Window::setBackground(
+	void *target,
+	int id )
+{
+	wbkgdset( (WINDOW*) target, getTheme().styles[id].color );
+	wattrset( (WINDOW*) target, getTheme().styles[id].color | getTheme().styles[id].attribute);
 }
 
 

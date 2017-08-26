@@ -37,9 +37,9 @@ void Button::paint()
 	std::wstring temp;
 
 	if (isActive())
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_BUTTON_ACTIVE].style);
+		setStyle(THEME_BUTTON_ACTIVE);
 	else
-		wattrset( (WINDOW*) content, getTheme().styles[THEME_BUTTON].style);
+		setStyle(THEME_BUTTON);
 
 	temp = L"[ " + text + L" ]";
 	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
