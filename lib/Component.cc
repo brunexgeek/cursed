@@ -76,6 +76,21 @@ int Component::getX() const
 }
 
 
+void Component::setY(
+	int y )
+{
+	if (y < 0) y = 0;
+	this->y = y;
+}
+
+void Component::setX(
+	int x )
+{
+	if (x < 0) x = 0;
+	this->x = x;
+}
+
+
 bool Component::isActive() const
 {
 	return parent.getActive() == this;

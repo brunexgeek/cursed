@@ -63,7 +63,7 @@ struct Theme
 static const ThemeColor THEME_COLORS[] =
 {
 	{ 0,                        0,           0 },
-	{ THEME_BACKGROUND,         COLOR_RED, COLOR_BLUE },
+	{ THEME_BACKGROUND,         COLOR_WHITE, COLOR_BLUE },
 	{ THEME_SHADOW,             COLOR_BLACK, COLOR_BLACK },
 	{ THEME_WINDOW,             COLOR_BLACK, COLOR_WHITE },
 	{ THEME_WINDOW_TITLE,       COLOR_BLUE,  COLOR_WHITE },

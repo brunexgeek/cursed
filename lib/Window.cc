@@ -163,9 +163,9 @@ void Window::addComponent(
 	// Note: never use fields or functions from 'control' here!
 	controls.push_back(&control);
 	if (interactive == NULL)
-		allStatic &= control.isInteractive();
+		allStatic &= !control.isInteractive();
 	else
-		allStatic &= *interactive;
+		allStatic &= !(*interactive);
 }
 
 
@@ -248,7 +248,10 @@ int Window::showModal()
 		{
 			this->refresh();
 			if (activeComponent >= 0 && activeComponent < (int) controls.size())
+			{
+				controls[activeComponent]->paint();
 				controls[activeComponent]->refresh();
+			}
 			doupdate();
 		}
 	}
@@ -314,7 +317,7 @@ bool Window::onKeyPress(
 	if (activeComponent >= 0 && activeComponent <= (int) controls.size())
 		handled = controls[activeComponent]->onKeyPress(event);
 
-	if (!handled)
+	if (!handled && !allStatic)
 	{
 		if (event.key == KEY_LEFT)
 		{

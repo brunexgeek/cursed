@@ -56,6 +56,12 @@ class Component : public Paintable, public KeyEventListener
 
 		int getX() const;
 
+		void setY(
+			int y );
+
+		void setX(
+			int x );
+
 		int getHeight() const;
 
 		int getWidth() const;

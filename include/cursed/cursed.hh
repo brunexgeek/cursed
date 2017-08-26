@@ -23,6 +23,7 @@
 #include <cursed/Label.hh>
 #include <cursed/TextBox.hh>
 #include <cursed/Button.hh>
+#include <cursed/CheckBox.hh>
 
 
 #endif // CURSED_CURSED_HH

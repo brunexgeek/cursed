@@ -26,7 +26,7 @@ TextBox::TextBox(
 	int height,
 	int width,
 	int y,
-	int x ) : Component(parent, 1, width, y, x), text(text)
+	int x ) : Component(parent, 1, width, y, x, true), text(text)
 {
 	position = (int)text.length();
 }
@@ -132,8 +132,8 @@ bool TextBox::onKeyPress(
 		handled = true;
 	}
 
-	if (handled)
-		paint();
+	/*if (handled)
+		paint();*/
 
 	return handled;
 }
