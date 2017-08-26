@@ -23,10 +23,12 @@ namespace cursed {
 
 Component::Component(
 	Window &parent,
+	int height,
+	int width,
 	int y,
 	int x,
-	int height,
-	int width ) : y(y), x(x), height(height), width(width), parent(parent)
+	bool interactive ) : y(y), x(x), height(height), width(width), parent(parent),
+		interactive(interactive)
 {
 	if (y < 0) this->y = 0;
 	if (x < 0) this->x = 0;
@@ -34,7 +36,7 @@ Component::Component(
 	if (width < 0) this->width = 0;
 
 	content = derwin( (WINDOW*) parent.content, this->height, this->width, this->y, this->x);
-
+	parent.addComponent(*this, &this->interactive);
 }
 
 
@@ -84,6 +86,12 @@ bool Component::isActive() const
 void Component::refresh()
 {
 	wnoutrefresh( (WINDOW*) content );
+}
+
+
+bool Component::isInteractive() const
+{
+	return interactive;
 }
 
 

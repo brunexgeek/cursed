@@ -88,10 +88,10 @@ static void ncurses_render(
 Label::Label(
 	Window &parent,
 	const std::wstring &text,
-	int y,
-	int x,
 	int height,
-	int width ) : Component(parent, y, x, height, width), text(text)
+	int width,
+	int y,
+	int x ) : Component(parent, height, width, y, x, false), text(text)
 {
 
 }
@@ -108,11 +108,6 @@ void Label::paint()
 	wattrset( (WINDOW*) content, getTheme().styles[THEME_LABEL].style);
 	ncurses_render((WINDOW*) content, text, y, x);
 	touchwin((WINDOW*) content);
-}
-
-bool Label::isStatic() const
-{
-	return true;
 }
 
 

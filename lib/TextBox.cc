@@ -23,9 +23,10 @@ namespace cursed {
 TextBox::TextBox(
 	Window &parent,
 	const std::wstring &text,
+	int height,
+	int width,
 	int y,
-	int x,
-	int width ) : Component(parent, y, x, 1, width), text(text)
+	int x ) : Component(parent, 1, width, y, x), text(text)
 {
 	position = (int)text.length();
 }
@@ -70,12 +71,6 @@ void TextBox::paint()
 const std::wstring &TextBox::getText() const
 {
 	return text;
-}
-
-
-bool TextBox::isStatic() const
-{
-	return false;
 }
 
 

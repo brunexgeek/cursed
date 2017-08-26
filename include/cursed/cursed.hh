@@ -14,47 +14,15 @@
  * limitations under the License.
  */
 
-#ifndef CURSED_TEXTBOX_HH
-#define CURSED_TEXTBOX_HH
+#ifndef CURSED_CURSED_HH
+#define CURSED_CURSED_HH
 
 
-#include <cursed/Component.hh>
-#include <string>
+#include <cursed/Application.hh>
+#include <cursed/Window.hh>
+#include <cursed/Label.hh>
+#include <cursed/TextBox.hh>
+#include <cursed/Button.hh>
 
 
-namespace cursed {
-
-
-class TextBox : public Component
-{
-	public:
-		TextBox(
-			Window &parent,
-			const std::wstring &text,
-			int height,
-			int width,
-			int y,
-			int x );
-
-		~TextBox();
-
-		void paint();
-
-		void onActive(
-			bool state );
-
-		bool onKeyPress(
-			const KeyEvent &event );
-
-		const std::wstring &getText() const;
-
-	public:
-		std::wstring text;
-		int position;
-};
-
-
-} // namespace cursed
-
-
-#endif // CURSED_TEXTBOX_HH
+#endif // CURSED_CURSED_HH

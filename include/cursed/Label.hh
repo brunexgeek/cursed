@@ -31,16 +31,14 @@ class Label : public Component
 		Label(
 			Window &parent,
 			const std::wstring &text,
-			int y,
-			int x,
 			int height,
-			int width );
+			int width,
+			int y,
+			int x );
 
 		~Label();
 
 		void paint();
-
-		bool isStatic() const;
 
 		void onActive(
 			bool state );

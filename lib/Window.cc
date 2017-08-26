@@ -23,7 +23,7 @@ namespace cursed {
 Window::Window(
 	Application &app,
 	Window &parent,
-	const std::string &title,
+	const std::wstring &title,
 	int height,
 	int width,
 	int y,
@@ -34,7 +34,7 @@ Window::Window(
 
 Window::Window(
 	Application &app,
-	const std::string &title,
+	const std::wstring &title,
 	int height,
 	int width,
 	int y,
@@ -45,7 +45,7 @@ Window::Window(
 
 void Window::initialize(
 	Window *parent,
-	const std::string *title,
+	const std::wstring *title,
 	int height,
 	int width,
 	int y,
@@ -104,8 +104,8 @@ void Window::paint()
 		box( (WINDOW*) window, 0 , 0);
 		if (!title.empty())
 		{
-			std::string temp = " " + title + " ";
-			mvwaddstr( (WINDOW*) window, 0, 2, temp.c_str());
+			std::wstring temp = L" " + title + L" ";
+			mvwaddwstr( (WINDOW*) window, 0, 2, temp.c_str());
 		}
 	}
 
@@ -157,10 +157,15 @@ void Window::render(
 
 
 void Window::addComponent(
-	Component &control )
+	Component &control,
+	const bool *interactive )
 {
+	// Note: never use fields or functions from 'control' here!
 	controls.push_back(&control);
-	allStatic &= control.isStatic();
+	if (interactive == NULL)
+		allStatic &= control.isInteractive();
+	else
+		allStatic &= *interactive;
 }
 
 
@@ -284,7 +289,7 @@ void Window::activateNext(
 		else
 		if (activeComponent < 0)
 			activeComponent = (int) controls.size() - 1;
-	} while (controls[activeComponent]->isStatic());
+	} while (!controls[activeComponent]->isInteractive());
 
 	controls[old]->paint();
 

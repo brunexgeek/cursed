@@ -35,7 +35,7 @@ class Window : public Paintable, public KeyEventListener
 		Window(
 			Application &app,
 			Window &parent,
-			const std::string &title,
+			const std::wstring &title,
 			int height,
 			int width,
 			int y = 0,
@@ -43,7 +43,7 @@ class Window : public Paintable, public KeyEventListener
 
 		Window(
 			Application &app,
-			const std::string &title,
+			const std::wstring &title,
 			int height,
 			int width,
 			int y = 0,
@@ -51,7 +51,7 @@ class Window : public Paintable, public KeyEventListener
 
 		void initialize(
 			Window *parent,
-			const std::string *title,
+			const std::wstring *title,
 			int height,
 			int width,
 			int y,
@@ -81,9 +81,6 @@ class Window : public Paintable, public KeyEventListener
 			int y,
 			int x );*/
 
-		void addComponent(
-			Component &control );
-
 		void close(
 			int result = 0 );
 
@@ -108,7 +105,7 @@ class Window : public Paintable, public KeyEventListener
 	protected:
 		void *window, *content, *shadow;
 		int height, width, py, px;
-		std::string title;
+		std::wstring title;
 		Window *parent;
 		std::vector<Component*> controls;
 		int activeComponent;
@@ -119,6 +116,10 @@ class Window : public Paintable, public KeyEventListener
 	private:
 		void activateNext(
 			int direction );
+
+		void addComponent(
+			Component &control,
+			const bool *interactive = NULL );
 
 	friend class Component;
 };

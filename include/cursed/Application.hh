@@ -77,6 +77,10 @@ class Application : public KeyEventListener
 		bool onKeyPress(
 			const KeyEvent &event );
 
+		int screenWidth() const;
+
+		int screenHeight() const;
+
 	private:
 		ApplicationState state;
 		const Theme &theme;

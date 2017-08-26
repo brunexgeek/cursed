@@ -45,8 +45,6 @@ class Button : public Component
 
 		void paint();
 
-		bool isStatic() const;
-
 		void onActive(
 			bool state );
 

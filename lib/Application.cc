@@ -217,4 +217,20 @@ bool Application::onKeyPress(
 }
 
 
+int Application::screenWidth() const
+{
+	int h, w;
+	getmaxyx(stdscr, h, w);
+	return w;
+}
+
+
+int Application::screenHeight() const
+{
+	int h, w;
+	getmaxyx(stdscr, h, w);
+	return h;
+}
+
+
 } // namespace cursed

@@ -35,10 +35,11 @@ class Component : public Paintable, public KeyEventListener
 	public:
 		Component(
 			Window &parent,
+			int height,
+			int width,
 			int y,
 			int x,
-			int height,
-			int width );
+			bool isInteractive = true );
 
 		virtual ~Component();
 
@@ -61,17 +62,20 @@ class Component : public Paintable, public KeyEventListener
 
 		const Theme &getTheme() const;
 
-		virtual bool isStatic() const = 0;
+		bool isStatic() const;
 
 		virtual void onActive(
 			bool state ) = 0;
 
 		void refresh();
 
+		bool isInteractive() const;
+
 	protected:
 		int y, x, height, width;
 		Window &parent;
 		void *content;
+		bool interactive;
 };
 
 

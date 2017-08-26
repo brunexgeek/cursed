@@ -26,7 +26,7 @@ Button::Button(
 	const std::wstring &label,
 	int y,
 	int x,
-	ButtonPressed *action ) : Component(parent, y, x, 1, (int)label.length() + 4),
+	ButtonPressed *action ) : Component(parent, 1, (int)label.length() + 4, y, x),
 		text(label), action(action)
 {
 	// nothing to do
@@ -73,12 +73,6 @@ int Button::scale(
 	const std::wstring &label )
 {
 	return (int) label.length() + 4;
-}
-
-
-bool Button::isStatic() const
-{
-	return false;
 }
 
 
