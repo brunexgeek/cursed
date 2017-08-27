@@ -1,4 +1,4 @@
-# cursed
+# cursed  [![Build Status](https://travis-ci.org/brunexgeek/cursed.svg?branch=master)](https://travis-ci.org/brunexgeek/cursed) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 **cursed** is a minimalist C++ (2011 or above) framework that allows you to build user interfaces for your applications using ``ncursesw``. This framework provides a high-level abstraction for creating windows and components (buttons, labels, text boxes, etc.). You can also extend the existing components or create your own.
 
