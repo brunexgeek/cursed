@@ -24,7 +24,7 @@ int main( )
 {
 	Application app;
 
-	const int height = 15;
+	const int height = 11;
 	const int width  = 60;
 	int y = (app.screenHeight() - height) / 2;
 	int x = (app.screenWidth() - width) / 2;

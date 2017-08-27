@@ -48,9 +48,13 @@ class TextBox : public Component
 
 		const std::wstring &getText() const;
 
-	public:
+	protected:
 		std::wstring text;
 		int position;
+		int start, end, cursor;
+
+		void moveCursor(
+			int direction );
 };
 
 

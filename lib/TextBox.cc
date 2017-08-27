@@ -28,7 +28,14 @@ TextBox::TextBox(
 	int y,
 	int x ) : Component(parent, 1, width, y, x, true), text(text)
 {
-	position = (int)text.length();
+	(void) height;
+	position = (int) text.length();
+
+	end = position - 1;
+	if (end < 0) end = 0;
+	start = (end + 1) - (width - 1);
+	if (start < 0) start = 0;
+	cursor = position - start;
 }
 
 
@@ -41,6 +48,8 @@ TextBox::~TextBox()
 void TextBox::paint()
 {
 	std::wstring temp;
+
+	//mvprintw(0, 0, "s:%02d  e:%02d  c:%02d  p:%02d", start, end, cursor, position);
 
 	if (isActive())
 	{
@@ -56,10 +65,18 @@ void TextBox::paint()
 	wclear( (WINDOW*)content );
 	--width;
 
-	if ((int)text.length() > width)
-		temp = text.substr(text.length() - width);
+	/*if ((int)text.length() > width)
+	{
+		int start = position - (width / 2);
+		if (start < 0) start = 0;
+		cursor = (position - start);
+		int count =
+
+		temp = text.substr(start, width);
+	}
 	else
-		temp = text;
+		temp = text;*/
+	temp = text.substr(start, (end - start) + 1);
 
 	width++;
 
@@ -70,9 +87,13 @@ void TextBox::paint()
 		wattron( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX_CURSOR].style);
 		waddwstr( (WINDOW*) content, L" ");
 	}*/
-	wmove( (WINDOW*) content, 0, position );
+	if (isActive())
+	{
+		wmove( (WINDOW*) content, 0, cursor );
+		wcursyncup( (WINDOW*) content );
+	}
+
 	touchwin( (WINDOW*) content);
-	//wcursyncup( (WINDOW*) content );
 }
 
 
@@ -85,12 +106,46 @@ const std::wstring &TextBox::getText() const
 void TextBox::onActive(
 	bool state )
 {
-	position = text.length();
+	position = (int) text.length();
 
 	if (state)
 		curs_set(2);
 	else
 		curs_set(0);
+}
+
+
+void TextBox::moveCursor(
+	int direction )
+{
+	cursor += direction;
+
+	if (direction < 0)
+	{
+		if (cursor < 0)
+		{
+			cursor = 0;
+			if (start > 0) --start;
+		}
+	}
+	else
+	if (direction > 0)
+	{
+		// the cursor cannot exceed the component edge
+		if (cursor >= width)
+		{
+			cursor = std::min( (int) text.length(), width - 1);
+			if (end < text.length() - 1)
+				++start;
+		}
+		else
+		// if the string don't fill th width, limit the cursor
+		if (start + cursor > text.length())
+			cursor = text.length() - start;
+	}
+
+	end = start + std::min( (int) text.length() - start, width - 2 );
+	position = start + cursor;
 }
 
 
@@ -101,28 +156,36 @@ bool TextBox::onKeyPress(
 
 	if (event.key == KEY_BACKSPACE)
 	{
-		if (!text.empty())
+		if (position > 0)
 		{
-			text.pop_back();
-			--position;
+			text.erase(position - 1, 1);
+			moveCursor(-1);
+			handled = true;
+		}
+	}
+	else
+	if (event.key == KEY_DC)
+	{
+		if (position < (int) text.length())
+		{
+			text.erase(position, 1);
+			moveCursor(0);
 			handled = true;
 		}
 	}
 	else
 	if (event.key == KEY_LEFT)
 	{
-		--position;
-		if (position < 0) position = 0;
+		moveCursor(-1);
 		handled = true;
 	}
 	else
 	if (event.key == KEY_RIGHT)
 	{
-		++position;
-		if (position >= (int) text.length()) position = (int) text.length();
+		moveCursor(1);
 		handled = true;
 	}
-	else
+	else/*
 	if (event.key == KEY_END)
 	{
 		position = (int) text.length();
@@ -134,11 +197,11 @@ bool TextBox::onKeyPress(
 		position = 0;
 		handled = true;
 	}
-	else
+	else*/
 	if ((event.key >= '\x20' && event.key <= '\x7E'))
 	{
 		text.insert(position, 1, event.key);
-		++position;
+		moveCursor(1);
 		handled = true;
 	}
 
