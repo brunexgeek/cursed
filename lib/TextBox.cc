@@ -29,8 +29,8 @@ TextBox::TextBox(
 	int x ) : Component(parent, 1, width, y, x, true), text(text)
 {
 	(void) height;
-	position = (int) text.length();
 
+	position = (int) text.length();
 	end = position - 1;
 	if (end < 0) end = 0;
 	start = (end + 1) - (width - 1);
@@ -61,32 +61,12 @@ void TextBox::paint()
 		setBackground(THEME_TEXTBOX);
 		setStyle(THEME_TEXTBOX);
 	}
-
 	wclear( (WINDOW*)content );
-	--width;
 
-	/*if ((int)text.length() > width)
-	{
-		int start = position - (width / 2);
-		if (start < 0) start = 0;
-		cursor = (position - start);
-		int count =
-
-		temp = text.substr(start, width);
-	}
-	else
-		temp = text;*/
 	temp = text.substr(start, (end - start) + 1);
-
-	width++;
 
 	mvwaddwstr( (WINDOW*) content, 0, 0, temp.c_str());
 
-	/*if (isActive())
-	{
-		wattron( (WINDOW*) content, getTheme().styles[THEME_TEXTBOX_CURSOR].style);
-		waddwstr( (WINDOW*) content, L" ");
-	}*/
 	if (isActive())
 	{
 		wmove( (WINDOW*) content, 0, cursor );
@@ -106,8 +86,6 @@ const std::wstring &TextBox::getText() const
 void TextBox::onActive(
 	bool state )
 {
-	position = (int) text.length();
-
 	if (state)
 		curs_set(2);
 	else
@@ -135,13 +113,13 @@ void TextBox::moveCursor(
 		if (cursor >= width)
 		{
 			cursor = std::min( (int) text.length(), width - 1);
-			if (end < text.length() - 1)
+			if (end < (int) text.length() - 1)
 				++start;
 		}
 		else
-		// if the string don't fill th width, limit the cursor
-		if (start + cursor > text.length())
-			cursor = text.length() - start;
+		// if the string don't fill the width, limit the cursor
+		if (start + cursor > (int) text.length())
+			cursor = (int) text.length() - start;
 	}
 
 	end = start + std::min( (int) text.length() - start, width - 2 );
@@ -185,19 +163,24 @@ bool TextBox::onKeyPress(
 		moveCursor(1);
 		handled = true;
 	}
-	else/*
+	else
 	if (event.key == KEY_END)
 	{
-		position = (int) text.length();
+		start  = (int) text.length() - width + 1;
+		if (start < 0) start = 0;
+		cursor = std::min( (int) text.length(), width - 1 );
+		moveCursor(0);
 		handled = true;
 	}
 	else
 	if (event.key == KEY_HOME)
 	{
-		position = 0;
+		start = 0;
+		cursor = 0;
+		moveCursor(0);
 		handled = true;
 	}
-	else*/
+	else
 	if ((event.key >= '\x20' && event.key <= '\x7E'))
 	{
 		text.insert(position, 1, event.key);

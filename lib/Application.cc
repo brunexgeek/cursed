@@ -221,6 +221,7 @@ int Application::screenWidth() const
 {
 	int h, w;
 	getmaxyx(stdscr, h, w);
+	(void) h;
 	return w;
 }
 
