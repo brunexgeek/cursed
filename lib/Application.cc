@@ -16,21 +16,22 @@
 
 #include <cursed/Window.hh>
 #include <cursed/Application.hh>
+#include <ncursesw/curses.h>
 
 
 namespace cursed {
 
 
-Application::Application() : theme(THEME_DEFAULT)
+Application::Application() : theme()
 {
 	initialize();
 }
 
 
 Application::Application(
-	const Theme &theme ) : theme(theme)
+	const Theme &theme )
 {
-	initialize();
+	initialize(&theme);
 }
 
 
@@ -40,10 +41,12 @@ void Application::refresh()
 }
 
 
-void Application::initialize()
+void Application::initialize(
+	const Theme *theme )
 {
 	this->state = APS_STOPPED;
 	this->activeWindow = 0;
+	this->theme = theme;
 
 	initscr();
 
@@ -53,17 +56,14 @@ void Application::initialize()
 		throw 0;
 	}
 
-	if (has_colors() == TRUE)
-	{
-		start_color();
+	if (theme == NULL)
+		this->theme = &getDefaultTheme();
 
-		// create pairs for every color in the theme
-		for (int i = 0; i == theme.colors[i].index && i == theme.styles[i].index; ++i)
-			init_pair(theme.colors[i].index, theme.colors[i].fgColor, theme.colors[i].bgColor);
+	applyTheme(*this->theme);
 
-		// set background color
-		wbkgd(stdscr, COLOR_PAIR(THEME_BACKGROUND));
-	}
+	// set background color
+	wbkgd(stdscr, COLOR_PAIR(THEME_BACKGROUND));
+
 	// disable input echo and line buffering
 	noecho();
 	cbreak();
@@ -73,6 +73,63 @@ void Application::initialize()
 	curs_set(0);
 }
 
+
+void Application::applyTheme(
+	const Theme &theme )
+{
+	if (has_colors() == TRUE)
+	{
+		start_color();
+
+		bool isLimited = (hasCapability("ccc") == false) || (COLORS <= (short) FillColor::Custom4);
+
+		if (!isLimited)
+		{
+			if (theme.palette != nullptr)
+			{
+				// set the color palette
+				for (short i = 0; i == theme.palette[i].color; ++i)
+				{
+					init_color( (short) theme.palette[i].color,
+						(short) (theme.palette[i].r * 3.9F),
+						(short) (theme.palette[i].g * 3.9F),
+						(short) (theme.palette[i].b * 3.9F));
+				}
+			}
+			else
+			{
+				// copy the original darker colors to fill colors
+				for (short i = (short) TextColor::Black; i < (short) TextColor::DarkGray; ++i)
+				{
+					short r, g, b;
+					color_content(i, &r, &g, &b);
+					init_color((short)(i + (short)FillColor::Black), r, g, b);
+				}
+			}
+		}
+
+		if (theme.scheme != NULL && theme.styles != NULL)
+		{
+			for (int i = 0; i == theme.scheme[i].index && i == theme.styles[i].index; ++i)
+			{
+				short textColor = (short) theme.scheme[i].foreground;
+				short fillColor = (short) theme.scheme[i].background;
+				if (isLimited)
+				{
+					fillColor = (short) (fillColor - (short) FillColor::Black);
+					if (fillColor >= (short) TextColor::Custom1)
+						fillColor = 0;
+
+					if (textColor >= (short) TextColor::Custom1)
+						textColor = 0;
+					if (textColor >= (short) TextColor::DarkGray)
+						textColor = (short) (textColor - (short) TextColor::DarkGray);
+				}
+				init_pair(theme.scheme[i].index, textColor, fillColor);
+			}
+		}
+	}
+}
 
 Application::~Application()
 {
@@ -150,7 +207,7 @@ void Application::onStop()
 
 const Theme &Application::getTheme() const
 {
-	return theme;
+	return *theme;
 }
 
 
@@ -176,7 +233,8 @@ bool Application::isRunning() const
 bool Application::hasCapability(
 	const std::string &capname )
 {
-	return !( (ssize_t)tigetstr(capname.c_str()) <= (ssize_t)0 );
+	return !( (ssize_t)tigetstr(capname.c_str()) <= (ssize_t)0 ) ||
+		(tigetflag(capname.c_str()) != 0);
 }
 
 

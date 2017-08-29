@@ -81,13 +81,19 @@ class Application : public KeyEventListener
 
 		int screenHeight() const;
 
+		const Theme &getDefaultTheme();
+
 	private:
 		ApplicationState state;
-		const Theme &theme;
+		const Theme *theme;
 		std::vector<Window*> windows;
 		int activeWindow;
 
-		void initialize();
+		void initialize(
+			const Theme *theme = NULL );
+
+		void applyTheme(
+			const Theme &theme );
 };
 
 

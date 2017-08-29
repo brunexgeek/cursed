@@ -16,6 +16,7 @@
 
 #include <cursed/Window.hh>
 #include <cursed/Component.hh>
+#include <ncursesw/curses.h>
 
 
 namespace cursed {

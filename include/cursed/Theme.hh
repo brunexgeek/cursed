@@ -18,15 +18,65 @@
 #define CURSED_THEME_HH
 
 
-#include <ncursesw/curses.h>
+#include <stdint.h>
 
 
 namespace cursed {
 
 
+enum class TextColor
+{
+	Black        = 0,
+	Red          = 1,
+	Green        = 2,
+	Yellow       = 3,
+	Blue         = 4,
+	Magenta      = 5,
+	Cyan         = 6,
+	LightGray    = 7,
+	DarkGray     = 8,
+	LightRed     = 9,
+	LightGreen   = 10,
+	LightYellow  = 11,
+	LightBlue    = 12,
+	LightMagenta = 13,
+	LightCyan    = 14,
+	White        = 15,
+	Custom1      = 16,
+	Custom2      = 17,
+	Custom3      = 18,
+	Custom4      = 19,
+};
+
+
+enum class FillColor
+{
+	Black        = 20,
+	Red          = 21,
+	Green        = 22,
+	Yellow       = 23,
+	Blue         = 24,
+	Magenta      = 25,
+	Cyan         = 26,
+	Gray         = 27,
+	Custom1      = 28,
+	Custom2      = 29,
+	Custom3      = 30,
+	Custom4      = 31,
+};
+
+
 struct ThemeColor
 {
-	short index, fgColor, bgColor;
+	uint8_t color;
+	uint8_t r, g, b;
+};
+
+struct ThemePair
+{
+	uint8_t index;
+	TextColor foreground;
+	FillColor background;
 };
 
 struct ThemeStyle
@@ -36,7 +86,8 @@ struct ThemeStyle
 
 struct Theme
 {
-	const ThemeColor *colors;
+	const ThemeColor *palette;
+	const ThemePair *scheme;
 	const ThemeStyle *styles;
 };
 
@@ -56,57 +107,11 @@ struct Theme
 #define THEME_CHECKBOX_ACTIVE          0x0D
 
 
-
-#define POSITION_CENTER     (int)(-1)
 #define ESCAPER             '\x1B'
 #define COMMAND_BOLD        '*'
 #define COMMAND_UNDERLINE   '_'
 #define COMMAND_ESCAPE      ESCAPER
 
-
-
-static const ThemeColor THEME_COLORS[] =
-{
-	{ 0,                        0,           0 },
-	{ THEME_BACKGROUND,         COLOR_WHITE, COLOR_BLUE  },
-	{ THEME_SHADOW,             COLOR_BLACK, COLOR_BLACK },
-	{ THEME_WINDOW,             COLOR_BLACK, COLOR_WHITE },
-	{ THEME_WINDOW_TITLE,       COLOR_BLUE,  COLOR_WHITE },
-	{ THEME_BUTTON,             COLOR_BLACK, COLOR_WHITE },
-	{ THEME_BUTTON_ACTIVE,      COLOR_WHITE, COLOR_BLUE  },
-	{ THEME_LABEL,              COLOR_BLACK, COLOR_WHITE },
-	{ THEME_LABEL_HIGHLIGHT,    COLOR_BLUE,  COLOR_WHITE },
-	{ THEME_TEXTBOX,            COLOR_WHITE, COLOR_BLACK },
-	{ THEME_TEXTBOX_ACTIVE,     COLOR_WHITE, COLOR_BLUE  },
-	{ THEME_TEXTBOX_CURSOR,     COLOR_BLACK, COLOR_WHITE },
-	{ THEME_CHECKBOX,           COLOR_BLACK, COLOR_WHITE },
-	{ THEME_CHECKBOX_ACTIVE,    COLOR_WHITE, COLOR_BLUE  },
-	{ 0,                        0,           0 },
-};
-
-static const ThemeStyle THEME_STYLES[] =
-{
-	{ 0,                        0                                    , 0 },
-	{ THEME_BACKGROUND,         COLOR_PAIR(THEME_BACKGROUND)         , 0 },
-	{ THEME_SHADOW,             COLOR_PAIR(THEME_SHADOW)             , 0 },
-	{ THEME_WINDOW,             COLOR_PAIR(THEME_WINDOW)             , 0 },
-	{ THEME_WINDOW_TITLE,       COLOR_PAIR(THEME_WINDOW_TITLE)       , 0 },
-	{ THEME_BUTTON,             COLOR_PAIR(THEME_BUTTON)             , A_DIM },
-	{ THEME_BUTTON_ACTIVE,      COLOR_PAIR(THEME_BUTTON_ACTIVE)      , 0 },
-	{ THEME_LABEL,              COLOR_PAIR(THEME_LABEL)              , 0 },
-	{ THEME_LABEL_HIGHLIGHT,    COLOR_PAIR(THEME_LABEL_HIGHLIGHT)    , 0 },
-	{ THEME_TEXTBOX,            COLOR_PAIR(THEME_TEXTBOX)            , 0 },
-	{ THEME_TEXTBOX_ACTIVE,     COLOR_PAIR(THEME_TEXTBOX_ACTIVE)     , 0 },
-	{ THEME_TEXTBOX_CURSOR,     COLOR_PAIR(THEME_TEXTBOX_CURSOR)     , 0 },
-	{ THEME_CHECKBOX,           COLOR_PAIR(THEME_CHECKBOX)           , 0 },
-	{ THEME_CHECKBOX_ACTIVE,    COLOR_PAIR(THEME_CHECKBOX_ACTIVE)    , 0 },
-	{ 0,                        0                                    , 0 },
-};
-
-static const Theme THEME_DEFAULT =
-{
-	THEME_COLORS, THEME_STYLES,
-};
 
 
 } // namespace cursed

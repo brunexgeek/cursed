@@ -16,6 +16,8 @@
 
 #include <cursed/TextBox.hh>
 #include <cursed/Text.hh>
+#include <ncursesw/curses.h>
+
 
 namespace cursed {
 
