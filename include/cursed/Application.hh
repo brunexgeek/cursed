@@ -50,29 +50,13 @@ class Application : public KeyEventListener
 
 		void refresh();
 
-		void run();
-
-		void run(
+		int run(
 			Window &panel );
-
-		void stop();
 
 		const Theme &getTheme() const;
 
 		bool hasCapability(
 			const std::string &capname );
-
-		void add(
-			Window &panel );
-
-		void remove(
-			Window &panel );
-
-		bool isRunning() const;
-
-		virtual void onStart();
-
-		virtual void onStop();
 
 		bool onKeyPress(
 			const KeyEvent &event );

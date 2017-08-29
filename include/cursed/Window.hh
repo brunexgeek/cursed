@@ -71,16 +71,6 @@ class Window : public Paintable, public KeyEventListener
 
 		int getHeight() const;
 
-		/*void write(
-			const std::string &text,
-			int y ,
-			int x );*/
-
-		/*void render(
-			const std::wstring &text,
-			int y,
-			int x );*/
-
 		void close(
 			int result = 0 );
 

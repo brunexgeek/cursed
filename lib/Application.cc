@@ -81,6 +81,7 @@ void Application::applyTheme(
 	{
 		start_color();
 
+		// we need color redefinition and at least 32 colors for full compatibility
 		bool isLimited = (hasCapability("ccc") == false) || (COLORS <= (short) FillColor::Custom4);
 
 		if (!isLimited)
@@ -98,7 +99,7 @@ void Application::applyTheme(
 			}
 			else
 			{
-				// copy the original darker colors to fill colors
+				// use the original darker colors as fill colors
 				for (short i = (short) TextColor::Black; i < (short) TextColor::DarkGray; ++i)
 				{
 					short r, g, b;
@@ -108,12 +109,16 @@ void Application::applyTheme(
 			}
 		}
 
+		// create the color pairs
 		if (theme.scheme != NULL && theme.styles != NULL)
 		{
 			for (int i = 0; i == theme.scheme[i].index && i == theme.styles[i].index; ++i)
 			{
 				short textColor = (short) theme.scheme[i].foreground;
 				short fillColor = (short) theme.scheme[i].background;
+
+				// limit the amount of colors to 8 if the terminal doesn't support
+				// at least 32 colors and color redefinition
 				if (isLimited)
 				{
 					fillColor = (short) (fillColor - (short) FillColor::Black);
@@ -124,109 +129,34 @@ void Application::applyTheme(
 						textColor = 0;
 					if (textColor >= (short) TextColor::DarkGray)
 						textColor = (short) (textColor - (short) TextColor::DarkGray);
-				}
+					}
+
 				init_pair(theme.scheme[i].index, textColor, fillColor);
 			}
 		}
 	}
 }
 
+
 Application::~Application()
 {
-	bkgd(COLOR_PAIR(THEME_SHADOW));
-	clear();
+	wbkgd(stdscr, COLOR_PAIR(0));
+	wclear(stdscr);
 	refresh();
 	endwin();
 }
 
 
-void Application::run()
-{
-	if (windows.size() == 0) return;
-
-	state = APS_RUNNING;
-
-	onStart();
-
-	KeyEvent event;
-	while (state != APS_STOPPING)
-	{
-		event.modifiers = 0;
-		event.key = wgetch(stdscr);
-
-		if (event.key == '\x1B')
-		{
-			event.key = wgetch(stdscr);
-			if (event.key == '\x09')
-			{
-				event.key |= 0x80000000;
-			}
-			else
-				continue;
-		}
-
-		if (onKeyPress(event))
-		{
-			this->refresh();
-			windows[activeWindow]->refresh();
-			doupdate();
-		}
-	}
-
-	state = APS_STOPPING;
-	onStop();
-
-	state = APS_STOPPED;
-}
-
-
-void Application::run(
+int Application::run(
 	Window &window )
 {
-	window.showModal();
-}
-
-
-void Application::stop()
-{
-	state = APS_STOPPING;
-}
-
-
-void Application::onStart()
-{
-
-}
-
-
-void Application::onStop()
-{
-
+	return window.showModal();
 }
 
 
 const Theme &Application::getTheme() const
 {
 	return *theme;
-}
-
-
-void Application::add(
-	Window &window )
-{
-	windows.push_back(&window);
-}
-
-void Application::remove(
-	Window &window )
-{
-	(void) window;
-}
-
-
-bool Application::isRunning() const
-{
-	return state == APS_RUNNING;
 }
 
 
@@ -242,22 +172,10 @@ bool Application::onKeyPress(
 	const KeyEvent &event )
 {
 	// windows always handle TAB key
-	if ((uint32_t)event.key == 0x80000009)
+	if (event.key == -9)
 	{
-		int old = activeWindow;
-
-		// notify the control that it's losing focus
-		//windows[activeWindow]->onActive(false);
-
-		// look for the next non-static control
 		++activeWindow;
 		if (activeWindow >= (int) windows.size()) activeWindow = 0;
-
-		windows[old]->paint();
-
-		// notify the control that it's gaining focus
-		//windows[activeWindow]->onActive(true);
-		windows[activeWindow]->paint();
 
 		return true;
 	}
