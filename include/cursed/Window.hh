@@ -97,8 +97,8 @@ class Window : public Paintable, public KeyEventListener
 		int height, width, py, px;
 		std::wstring title;
 		Window *parent;
-		std::vector<Component*> controls;
-		int activeComponent;
+		std::vector<Component*> componentList;
+		std::vector<Component*>::iterator activeComponent;
 		int result;
 		bool allStatic;
 		Application &app;

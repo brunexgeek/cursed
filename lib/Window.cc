@@ -57,7 +57,7 @@ void Window::initialize(
 	this->py = y;
 	this->px = x;
 	this->result = -1;
-	this->activeComponent = 0;
+	this->activeComponent = componentList.end();;
 	this->allStatic = true;
 
 	if (title != NULL)
@@ -123,8 +123,14 @@ void Window::paint()
 	touchwin( (WINDOW*) content);
 
 	// paint all controls
-	auto it = controls.begin();
-	for (; it != controls.end(); ++it) (*it)->paint();
+	auto it = componentList.begin();
+	for (; it != componentList.end(); ++it)
+	{
+		if (activeComponent != it) (*it)->paint();
+	}
+
+	if (activeComponent != componentList.end())
+		(*activeComponent)->paint();
 }
 
 
@@ -164,7 +170,7 @@ void Window::addComponent(
 	const bool *interactive )
 {
 	// Note: never use fields or functions from 'control' here!
-	controls.push_back(&control);
+	componentList.push_back(&control);
 	if (interactive == NULL)
 		allStatic &= !control.isInteractive();
 	else
@@ -182,8 +188,8 @@ void Window::close(
 
 Component *Window::getActive()
 {
-	if (activeComponent <= (int) controls.size())
-		return controls[activeComponent];
+	if (activeComponent != componentList.end())
+		return *activeComponent;
 	else
 		return NULL;
 }
@@ -192,15 +198,15 @@ Component *Window::getActive()
 void Window::setActive(
 	Component *control )
 {
-	activeComponent = -1;
+	activeComponent = componentList.end();
 
 	if (control != NULL)
 	{
-		auto it = controls.begin();
-		for (; it != controls.end(); ++it)
+		auto it = componentList.begin();
+		for (; it != componentList.end(); ++it)
 		{
 			if (*it == control)
-				activeComponent = (int) (it - controls.begin());
+				activeComponent = it;
 		}
 	}
 }
@@ -216,30 +222,31 @@ void Window::setActive(
 void Window::setActive(
 	int index )
 {
-	if (index < 0 || index >= (int) controls.size())
-		activeComponent = -1;
+	if (index < 0 || index >= (int) componentList.size())
+		activeComponent = componentList.end();
 	else
-		activeComponent = index;
+		activeComponent = componentList.begin() + index;
 }
 
 
 int Window::showModal()
 {
+	if (componentList.size() == 0) return -1;
+
+	if (activeComponent == componentList.end())
+		activeComponent = componentList.begin();
+
 	KeyEvent event;
 	result = -1;
 
 	paint();
 
 	// notify the active control that it's gaining focus
-	if (activeComponent >= 0 && activeComponent < (int) controls.size())
-	{
-		controls[activeComponent]->onActive(true);
-		controls[activeComponent]->paint();
-	}
+	(*activeComponent)->onActive(true);
+	(*activeComponent)->paint();
 
 	this->refresh();
-	if (activeComponent >= 0 && activeComponent < (int) controls.size())
-		controls[activeComponent]->refresh();
+	(*activeComponent)->refresh();
 	doupdate();
 
 	while (result < 0)
@@ -249,12 +256,8 @@ int Window::showModal()
 
 		if (onKeyPress(event))
 		{
+			this->paint();
 			this->refresh();
-			if (activeComponent >= 0 && activeComponent < (int) controls.size())
-			{
-				controls[activeComponent]->paint();
-				controls[activeComponent]->refresh();
-			}
 			doupdate();
 		}
 	}
@@ -271,37 +274,54 @@ void Window::refresh()
 	wnoutrefresh( (WINDOW*) content);
 
 	// refresh all controls
-	auto it = controls.begin();
-	for (; it != controls.end(); ++it) (*it)->refresh();
+	auto it = componentList.begin();
+	for (; it != componentList.end(); ++it) (*it)->refresh();
 }
 
 
 void Window::activateNext(
 	int direction )
 {
-	if (controls.size() == 0) return;
+	if (componentList.size() == 0 || allStatic) return;
 
-	int old = activeComponent;
+	int step = 0;
+	if (direction > 0)
+		step = 1;
+	else
+	if (direction < 0)
+	{
+		step = -1;
+		direction *= -1;
+	}
 
-	// notify the control that it's losing focus
-	if (activeComponent >= 0 && activeComponent < (int) controls.size())
-		controls[activeComponent]->onActive(false);
+	// notify the control it's losing focus
+	if (activeComponent != componentList.end())
+	{
+		(*activeComponent)->onActive(false);
+		(*activeComponent)->paint();
 
-	// look for the next non-static control
-	do {
-		activeComponent += direction;
-		if (activeComponent >= (int) controls.size())
-			activeComponent = 0;
-		else
-		if (activeComponent < 0)
-			activeComponent = (int) controls.size() - 1;
-	} while (!controls[activeComponent]->isInteractive());
+		int index = (int) (activeComponent - componentList.begin());
 
-	controls[old]->paint();
+		// look for the next non-static control
+		while (direction > 0 || !(*activeComponent)->isInteractive())
+		{
+			index += step;
+			--direction;
+			if (index >= (int) componentList.size())
+				index = 0;
+			else
+			if (index < 0)
+				index = (int) componentList.size() - 1;
 
-	// notify the control that it's gaining focus
-	controls[activeComponent]->onActive(true);
-	controls[activeComponent]->paint();
+			activeComponent = componentList.begin() + index;
+		}
+	}
+	else
+		activeComponent = componentList.begin();
+
+	// notify the control it's gaining focus
+	(*activeComponent)->onActive(true);
+	(*activeComponent)->paint();
 }
 
 
@@ -317,8 +337,8 @@ bool Window::onKeyPress(
 
 	// send the key event to the active control
 	bool handled = false;
-	if (activeComponent >= 0 && activeComponent <= (int) controls.size())
-		handled = controls[activeComponent]->onKeyPress(event);
+	if (activeComponent != componentList.end())
+		handled = (*activeComponent)->onKeyPress(event);
 
 	if (!handled && !allStatic)
 	{
