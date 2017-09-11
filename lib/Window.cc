@@ -57,7 +57,7 @@ void Window::initialize(
 	this->py = y;
 	this->px = x;
 	this->result = -1;
-	this->activeComponent = componentList.end();;
+	this->activeComponent = componentList.end();
 	this->allStatic = true;
 
 	if (title != NULL)
@@ -169,8 +169,16 @@ void Window::addComponent(
 	Component &control,
 	const bool *interactive )
 {
-	// Note: never use fields or functions from 'control' here!
+	int index = -1;
+
+	if (activeComponent != componentList.end())
+		index = (int) (componentList.begin() - activeComponent);
 	componentList.push_back(&control);
+	if (index >= 0)
+		activeComponent = componentList.begin() + index;
+	else
+		activeComponent = componentList.end();
+
 	if (interactive == NULL)
 		allStatic &= !control.isInteractive();
 	else
