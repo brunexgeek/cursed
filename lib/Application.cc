@@ -163,8 +163,8 @@ const Theme &Application::getTheme() const
 bool Application::hasCapability(
 	const std::string &capname )
 {
-	return !( (ssize_t)tigetstr(capname.c_str()) <= (ssize_t)0 ) ||
-		(tigetflag(capname.c_str()) != 0);
+	return !( (ssize_t)tigetstr((char*)capname.c_str()) <= (ssize_t)0 ) ||
+		(tigetflag((char*)capname.c_str()) != 0);
 }
 
 
